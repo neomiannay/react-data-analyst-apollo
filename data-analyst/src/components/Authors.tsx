@@ -24,13 +24,13 @@ function Authors() {
     return (
         <div>
             <h1>Authors</h1>
-            <strong>This is the list of authors</strong>
             <ul>
-                {data.authors.map((author: Author) => (
-                    <li key={author.id}>
-                        <p>{author.author}</p>
-                    </li>
-                ))}
+              <strong>This is the list of authors</strong>
+              {data.authors.map((author: Author) => (
+                  <li key={author.id}>
+                      <p>{author.author}</p>
+                  </li>
+              ))}
             </ul>
         </div>
     );
