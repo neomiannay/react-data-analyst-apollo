@@ -1,10 +1,4 @@
-import React, { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
-
-interface Author {
-  author: string;
-  title?: string;
-}
 
 interface Book {
   title: string;
@@ -13,51 +7,36 @@ interface Book {
   rate?: number;
 }
 
-const GET_LOCATIONS = gql`
-  query GetLocations {
-    locations {
+const GET_BOOKS = gql`
+  query {
+    books {
+      title
+      author
       id
-      name
+      rate
     }
   }
 `;
 
 function Home() {
 
-  const { loading, error, data } = useQuery(GET_LOCATIONS);
+  const { loading, error, data } = useQuery(GET_BOOKS);
 
-  const [books, setBooks] = useState<Book[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : Content could not be loaded</p>;
 
-  const fetchBooks = async () => {
-    const response = await fetch('http://localhost:4000', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: '{ books { title, author, id, rate } }' }),
-      });
-    const dataBooks = await response.json();
-    setBooks(dataBooks.data.books);
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    fetchBooks();
-  }, []);
-  
   return (
     <div>
-      <h1>Home</h1>
-      {isLoading && <h3>Loading...</h3>}
-      {!isLoading && books.map(({id, title, author, rate}) => (
-        <React.Fragment key={id}>
-          <h2>{title}</h2>
-          <p>Author: {author}</p>
-          <p>rate: {rate}/10</p>
-        </React.Fragment>
-        ))
-      }
+      <h1>Books</h1>
+      <ul>
+        {data.books.map((book: Book) => (
+          <li key={book.id}>
+            <h2>{book.title}</h2>
+            <p>Author: {book.author}</p>
+            <p>rate: {book.rate}/10</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
